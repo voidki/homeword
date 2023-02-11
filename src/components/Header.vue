@@ -98,8 +98,12 @@ export default {
     avatar() {
       return (
         this.$store.state.user.avatar || require("@/assets/user-default.png")
+        // "http://localhost:7777/images/2023/02/11/ec810b80a77a40d68824fcc36191618d.jpg"
       );
     },
+  },
+  mounted(){
+    console.log(this.avatar)
   },
   methods: {
     ...mapMutations("tab", ["collapseMenu"]),

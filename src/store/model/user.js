@@ -1,41 +1,50 @@
-import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, logout, getInfo } from "@/api/login";
+import {
+  getToken,
+  setToken,
+  removeToken,
+  getAvatar,
+  setAvatar,
+  removeAvatar,
+} from "@/utils/auth";
 
 const user = {
   state: {
     token: getToken(),
-    name: '',
-    avatar: '',
+    name: "",
+    avatar: getAvatar(),
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
-      state.token = token
+      state.token = token;
     },
     SET_NAME: (state, name) => {
-      state.name = name
+      state.name = name;
     },
     SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar
+      state.avatar = avatar;
     },
   },
 
   actions: {
     // 登录
-    Login({ commit,state }, userInfo) {
-      const username = userInfo.userName.trim()
-      const password = userInfo.password
+    Login({ commit, state }, userInfo) {
+      const username = userInfo.userName.trim();
+      const password = userInfo.password;
       return new Promise((resolve, reject) => {
-        login(username, password).then(res => {
-          setToken(res.token)
-          commit('SET_TOKEN', res.token)
-          const avatar = res.userInfo.avatar || require('@/assets/user-default.png')
-          commit('SET_AVATAR',avatar)
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
+        login(username, password)
+          .then((res) => {
+            setToken(res.token);
+            setAvatar(res.userInfo.avatar);
+            commit("SET_TOKEN", res.token);
+            commit("SET_AVATAR", res.userInfo.avatar);
+            resolve();
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     },
 
     // 获取用户信息
@@ -62,26 +71,31 @@ const user = {
     // 退出系统
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          removeToken()
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
+        logout(state.token)
+          .then(() => {
+            commit("SET_TOKEN", "");
+            removeToken();
+            commit("SET_AVATAR", "");
+            removeAvatar();
+            resolve();
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     },
 
     // 前端 登出
     FedLogOut({ commit }) {
-      return new Promise(resolve => {
-        commit('SET_TOKEN', '')
-        removeToken()
-        resolve()
-      })
+      return new Promise((resolve) => {
+        commit("SET_TOKEN", "");
+        removeToken();
+        commit("SET_AVATAR", "");
+        removeAvatar();
+        resolve();
+      });
     },
-    
-  }
-}
+  },
+};
 
-export default user
+export default user;
